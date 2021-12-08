@@ -12,10 +12,6 @@ import 'dart:typed_data';
 import 'src/registry/registry.dart';
 import 'src/utils.dart';
 
-part 'src/api/aead_cipher.dart';
-
-part 'src/api/aead_parameters.dart';
-
 part 'src/api/algorithm.dart';
 
 part 'src/api/asymmetric_block_cipher.dart';
@@ -46,5 +42,4 @@ part 'src/api/secure_random.dart';
 part 'src/api/signature.dart';
 part 'src/api/signer.dart';
 part 'src/api/stream_cipher.dart';
-part 'src/api/aead_block_cipher.dart';
 part 'src/api/xof.dart';
