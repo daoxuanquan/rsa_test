@@ -1,6 +1,5 @@
 library src.registry.impl;
 
-import 'package:test_rsa_lib/digests/sm3.dart';
 import 'package:test_rsa_lib/export.dart';
 import 'package:test_rsa_lib/src/registry/registry.dart';
 
@@ -22,27 +21,9 @@ void _registerAsymmetricCiphers(FactoryRegistry registry) {
 
 
 void _registerDigests(FactoryRegistry registry) {
-  registry.register(Blake2bDigest.factoryConfig);
-  registry.register(MD2Digest.factoryConfig);
-  registry.register(MD4Digest.factoryConfig);
-  registry.register(MD5Digest.factoryConfig);
-  registry.register(RIPEMD128Digest.factoryConfig);
-  registry.register(RIPEMD160Digest.factoryConfig);
-  registry.register(RIPEMD256Digest.factoryConfig);
-  registry.register(RIPEMD320Digest.factoryConfig);
   registry.register(SHA1Digest.factoryConfig);
-  registry.register(SHA3Digest.factoryConfig);
-  registry.register(KeccakDigest.factoryConfig);
-  registry.register(SHA224Digest.factoryConfig);
   registry.register(SHA256Digest.factoryConfig);
-  registry.register(SHA384Digest.factoryConfig);
   registry.register(SHA512Digest.factoryConfig);
-  registry.register(SHA512tDigest.factoryConfig);
-  registry.register(TigerDigest.factoryConfig);
-  registry.register(WhirlpoolDigest.factoryConfig);
-  registry.register(SHAKEDigest.factoryConfig);
-  registry.register(CSHAKEDigest.factoryConfig);
-  registry.register(SM3Digest.factoryConfig);
 }
 
 void _registerKeyGenerators(FactoryRegistry registry) {
