@@ -23,7 +23,6 @@ void _registerAsymmetricCiphers(FactoryRegistry registry) {
 void _registerDigests(FactoryRegistry registry) {
   registry.register(SHA1Digest.factoryConfig);
   registry.register(SHA256Digest.factoryConfig);
-  registry.register(SHA512Digest.factoryConfig);
 }
 
 void _registerKeyGenerators(FactoryRegistry registry) {
