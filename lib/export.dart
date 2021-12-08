@@ -8,10 +8,7 @@ export 'package:test_rsa_lib/api.dart';
 export 'package:test_rsa_lib/impl.dart';
 
 // asymmetric
-export 'package:test_rsa_lib/asymmetric/pkcs1.dart';
 export 'package:test_rsa_lib/asymmetric/rsa.dart';
-export 'package:test_rsa_lib/asymmetric/oaep.dart';
-
 // block
 export 'package:test_rsa_lib/block/aes_fast.dart';
 export 'package:test_rsa_lib/block/aes.dart';

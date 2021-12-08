@@ -109,7 +109,7 @@ bool rsaVerify(
 ///
 /// rsa = use RSAEngine without an Asymmetric Block Cipher.
 
-enum AsymBlockCipherToUse { rsa, pkcs1, oaep }
+enum AsymBlockCipherToUse { rsa }
 
 //----------------------------------------------------------------
 
@@ -117,10 +117,6 @@ AsymmetricBlockCipher _createBlockCipher(AsymBlockCipherToUse scheme) {
   switch (scheme) {
     case AsymBlockCipherToUse.rsa:
       return RSAEngine();
-    case AsymBlockCipherToUse.pkcs1:
-      return PKCS1Encoding(RSAEngine());
-    case AsymBlockCipherToUse.oaep:
-      return OAEPEncoding(RSAEngine());
   }
 }
 
@@ -406,8 +402,4 @@ void main(List<String> args) {
 
   _testEncryptAndDecrypt(
       rsaPair, AsymBlockCipherToUse.rsa, Uint8List.fromList(bytes), verbose);
-  _testEncryptAndDecrypt(
-      rsaPair, AsymBlockCipherToUse.pkcs1, Uint8List.fromList(bytes), verbose);
-  _testEncryptAndDecrypt(
-      rsaPair, AsymBlockCipherToUse.oaep, Uint8List.fromList(bytes), verbose);
 }

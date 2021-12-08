@@ -6,7 +6,6 @@ import 'dart:typed_data';
 
 import 'package:test_rsa_lib/api.dart';
 import 'package:test_rsa_lib/asymmetric/api.dart';
-import 'package:test_rsa_lib/asymmetric/pkcs1.dart';
 import 'package:test_rsa_lib/asymmetric/rsa.dart';
 import 'package:test_rsa_lib/src/registry/registry.dart';
 
@@ -38,7 +37,7 @@ class RSASigner implements Signer {
     'SHA-512': '0609608648016503040203'
   };
 
-  final AsymmetricBlockCipher _rsa = PKCS1Encoding(RSAEngine());
+  final AsymmetricBlockCipher _rsa =RSAEngine();
   final Digest _digest;
   late Uint8List
       _digestIdentifier; // DER encoded with trailing tag (06)+length byte

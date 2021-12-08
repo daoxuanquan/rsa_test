@@ -13,8 +13,6 @@ void registerFactories(FactoryRegistry registry) {
 }
 
 void _registerAsymmetricCiphers(FactoryRegistry registry) {
-  registry.register(OAEPEncoding.factoryConfig);
-  registry.register(PKCS1Encoding.factoryConfig);
   registry.register(RSAEngine.factoryConfig);
 }
 
