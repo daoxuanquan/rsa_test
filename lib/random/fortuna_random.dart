@@ -5,6 +5,7 @@ library impl.secure_random.fortuna_random;
 import 'dart:typed_data';
 
 import 'package:test_rsa_lib/api.dart';
+import 'package:test_rsa_lib/block/aes.dart';
 import 'package:test_rsa_lib/random/auto_seed_block_ctr_random.dart';
 import 'package:test_rsa_lib/src/registry/registry.dart';
 
@@ -13,10 +14,15 @@ class FortunaRandom implements SecureRandom {
   static final FactoryConfig factoryConfig =
       StaticFactoryConfig(SecureRandom, 'Fortuna', () => FortunaRandom());
 
+  final AESEngine _aes;
   late AutoSeedBlockCtrRandom _prng;
 
   @override
   String get algorithmName => 'Fortuna';
+
+  FortunaRandom() : _aes = AESEngine() {
+    _prng = AutoSeedBlockCtrRandom(_aes, false);
+  }
 
   @override
   void seed(covariant KeyParameter param) {

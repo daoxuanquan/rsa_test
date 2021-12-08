@@ -1,11 +1,13 @@
 library src.registry.impl;
 
+import 'package:test_rsa_lib/block/aes.dart';
 import 'package:test_rsa_lib/digests/sm3.dart';
 import 'package:test_rsa_lib/export.dart';
 import 'package:test_rsa_lib/src/registry/registry.dart';
 
 void registerFactories(FactoryRegistry registry) {
   _registerAsymmetricCiphers(registry);
+  _registerBlockCiphers(registry);
   _registerDigests(registry);
   _registerKeyGenerators(registry);
   _registerPaddedBlockCiphers(registry);
@@ -18,6 +20,19 @@ void _registerAsymmetricCiphers(FactoryRegistry registry) {
   registry.register(OAEPEncoding.factoryConfig);
   registry.register(PKCS1Encoding.factoryConfig);
   registry.register(RSAEngine.factoryConfig);
+}
+
+void _registerBlockCiphers(FactoryRegistry registry) {
+  registry.register(AESEngine.factoryConfig);
+
+  // modes
+  registry.register(CBCBlockCipher.factoryConfig);
+  registry.register(CFBBlockCipher.factoryConfig);
+  registry.register(ECBBlockCipher.factoryConfig);
+  registry.register(GCTRBlockCipher.factoryConfig);
+  registry.register(OFBBlockCipher.factoryConfig);
+  registry.register(GCMBlockCipher.factoryConfig);
+  registry.register(IGEBlockCipher.factoryConfig);
 }
 
 void _registerDigests(FactoryRegistry registry) {
@@ -45,7 +60,8 @@ void _registerDigests(FactoryRegistry registry) {
 }
 
 void _registerKeyGenerators(FactoryRegistry registry) {
-  registry.register(RSAKeyGenerator.factoryConfig);}
+  registry.register(RSAKeyGenerator.factoryConfig);
+}
 
 void _registerPaddedBlockCiphers(FactoryRegistry registry) {
   registry.register(PaddedBlockCipherImpl.factoryConfig);
@@ -65,3 +81,4 @@ void _registerRandoms(FactoryRegistry registry) {
 void _registerSigners(FactoryRegistry registry) {
   registry.register(RSASigner.factoryConfig);
 }
+

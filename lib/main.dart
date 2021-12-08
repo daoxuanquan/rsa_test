@@ -1,11 +1,31 @@
+
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
+
+// When not using the registry:
 import 'package:test_rsa_lib/export.dart';
 import 'package:test_rsa_lib/src/platform_check/platform_check.dart';
 
-enum AsymBlockCipherToUse { rsa, pkcs1, oaep }
-  
+//================================================================
+// Test data
+
+const shortPlaintext = 'What hath God wrought!';
+
+const longPlaintext = '''
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
+eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
+in culpa qui officia deserunt mollit anim id est laborum.''';
+
+//================================================================
+// Key generation
+
+//----------------------------------------------------------------
+/// Generate an RSA key pair.
+
 AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
     SecureRandom secureRandom,
     {int bitLength = 2048}) {
@@ -89,7 +109,7 @@ bool rsaVerify(
 ///
 /// rsa = use RSAEngine without an Asymmetric Block Cipher.
 
-
+enum AsymBlockCipherToUse { rsa, pkcs1, oaep }
 
 //----------------------------------------------------------------
 
@@ -104,9 +124,31 @@ AsymmetricBlockCipher _createBlockCipher(AsymBlockCipherToUse scheme) {
   }
 }
 
+Uint8List rsaEncrypt(RSAPublicKey myPublic, Uint8List dataToEncrypt,
+    AsymBlockCipherToUse scheme) {
+  var encryptor = _createBlockCipher(scheme);
+
+  encryptor.init(
+    true,
+    PublicKeyParameter<RSAPublicKey>(myPublic),
+  ); // true=encrypt
+
+  return _processInBlocks(encryptor, dataToEncrypt);
+}
+
 //----------------------------------------------------------------
 
+Uint8List rsaDecrypt(RSAPrivateKey myPrivate, Uint8List cipherText,
+    AsymBlockCipherToUse scheme) {
+  var decryptor = _createBlockCipher(scheme);
 
+  decryptor.init(
+    false,
+    PrivateKeyParameter<RSAPrivateKey>(myPrivate),
+  ); // false=decrypt
+
+  return _processInBlocks(decryptor, cipherText);
+}
 
 //----------------------------------------------------------------
 
@@ -133,32 +175,6 @@ Uint8List _processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
       ? output
       : output.sublist(0, outputOffset);
 }
-
-Uint8List rsaDecrypt(RSAPrivateKey myPrivate, Uint8List cipherText,
-    AsymBlockCipherToUse scheme) {
-  var decryptor = _createBlockCipher(scheme);
-
-  decryptor.init(
-    false,
-    PrivateKeyParameter<RSAPrivateKey>(myPrivate),
-  ); // false=decrypt
-
-  return _processInBlocks(decryptor, cipherText);
-}
-
-
-Uint8List rsaEncrypt(RSAPublicKey myPublic, Uint8List dataToEncrypt,
-    AsymBlockCipherToUse scheme) {
-  var encryptor = _createBlockCipher(scheme);
-
-  encryptor.init(
-    true,
-    PublicKeyParameter<RSAPublicKey>(myPublic),
-  ); // true=encrypt
-
-  return _processInBlocks(encryptor, dataToEncrypt);
-}
-
 
 //================================================================
 // Supporting functions
@@ -376,11 +392,11 @@ void main(List<String> args) {
   // Generate an RSA key pair
 
   final rsaPair = generateRSAkeyPair(getSecureRandom(), bitLength: 1024);
-  print(dumpRsaKeys(rsaPair, verbose: verbose));
+  print(dumpRsaKeys(rsaPair, verbose: true));
 
   // Use the key pair
 
-  const plaintext = 'What hath God wrought!';
+  final plaintext = (longText) ? longPlaintext : shortPlaintext;
   if (verbose) {
     print('Plaintext: $plaintext\n');
   }
@@ -394,4 +410,4 @@ void main(List<String> args) {
       rsaPair, AsymBlockCipherToUse.pkcs1, Uint8List.fromList(bytes), verbose);
   _testEncryptAndDecrypt(
       rsaPair, AsymBlockCipherToUse.oaep, Uint8List.fromList(bytes), verbose);
-  }
+}

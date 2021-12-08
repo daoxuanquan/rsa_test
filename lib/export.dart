@@ -12,6 +12,18 @@ export 'package:test_rsa_lib/asymmetric/pkcs1.dart';
 export 'package:test_rsa_lib/asymmetric/rsa.dart';
 export 'package:test_rsa_lib/asymmetric/oaep.dart';
 
+// block
+export 'package:test_rsa_lib/block/aes_fast.dart';
+export 'package:test_rsa_lib/block/aes.dart';
+// block/modes
+export 'package:test_rsa_lib/block/modes/cbc.dart';
+export 'package:test_rsa_lib/block/modes/cfb.dart';
+export 'package:test_rsa_lib/block/modes/ecb.dart';
+export 'package:test_rsa_lib/block/modes/gctr.dart';
+export 'package:test_rsa_lib/block/modes/ofb.dart';
+export 'package:test_rsa_lib/block/modes/gcm.dart';
+export 'package:test_rsa_lib/block/modes/ige.dart';
+
 // digests
 export 'package:test_rsa_lib/digests/blake2b.dart';
 export 'package:test_rsa_lib/digests/keccak.dart';
@@ -34,6 +46,7 @@ export 'package:test_rsa_lib/digests/sha512t.dart';
 export 'package:test_rsa_lib/digests/tiger.dart';
 export 'package:test_rsa_lib/digests/whirlpool.dart';
 export 'package:test_rsa_lib/digests/sm3.dart';
+
 // key_generators
 export 'package:test_rsa_lib/key_generators/api.dart';
 export 'package:test_rsa_lib/key_generators/rsa_key_generator.dart';
@@ -48,6 +61,4 @@ export 'package:test_rsa_lib/random/auto_seed_block_ctr_random.dart';
 export 'package:test_rsa_lib/random/block_ctr_random.dart';
 export 'package:test_rsa_lib/random/fortuna_random.dart';
 
-// signers
 export 'package:test_rsa_lib/signers/rsa_signer.dart';
-// strea
