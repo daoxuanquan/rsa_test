@@ -25,7 +25,6 @@ export 'package:test_rsa_lib/key_generators/api.dart';
 export 'package:test_rsa_lib/key_generators/rsa_key_generator.dart';
 
 // paddings
-export 'package:test_rsa_lib/padded_block_cipher/padded_block_cipher_impl.dart';
 export 'package:test_rsa_lib/paddings/pkcs7.dart';
 export 'package:test_rsa_lib/paddings/iso7816d4.dart';
 

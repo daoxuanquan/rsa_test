@@ -7,7 +7,6 @@ void registerFactories(FactoryRegistry registry) {
   _registerAsymmetricCiphers(registry);
   _registerDigests(registry);
   _registerKeyGenerators(registry);
-  _registerPaddedBlockCiphers(registry);
   _registerPaddings(registry);
   _registerRandoms(registry);
   _registerSigners(registry);
@@ -29,9 +28,6 @@ void _registerKeyGenerators(FactoryRegistry registry) {
   registry.register(RSAKeyGenerator.factoryConfig);
 }
 
-void _registerPaddedBlockCiphers(FactoryRegistry registry) {
-  registry.register(PaddedBlockCipherImpl.factoryConfig);
-}
 
 void _registerPaddings(FactoryRegistry registry) {
   registry.register(PKCS7Padding.factoryConfig);
