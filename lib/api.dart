@@ -9,9 +9,6 @@ library api;
 
 import 'dart:typed_data';
 
-import 'package:test_rsa_lib/src/impl/entropy.dart';
-import 'package:test_rsa_lib/src/platform_check/platform_check.dart';
-
 import 'src/registry/registry.dart';
 import 'src/utils.dart';
 
@@ -30,11 +27,9 @@ part 'src/api/asymmetric_key_parameter.dart';
 part 'src/api/block_cipher.dart';
 part 'src/api/cipher_parameters.dart';
 part 'src/api/digest.dart';
-part 'src/api/key_derivator.dart';
 part 'src/api/key_generator.dart';
 part 'src/api/key_generator_parameters.dart';
 part 'src/api/key_parameter.dart';
-part 'src/api/mac.dart';
 part 'src/api/padded_block_cipher.dart';
 part 'src/api/padded_block_cipher_parameters.dart';
 part 'src/api/padding.dart';
@@ -51,7 +46,5 @@ part 'src/api/secure_random.dart';
 part 'src/api/signature.dart';
 part 'src/api/signer.dart';
 part 'src/api/stream_cipher.dart';
-part "src/api/srp_client.dart";
-part "src/api/srp_server.dart";
 part 'src/api/aead_block_cipher.dart';
 part 'src/api/xof.dart';
