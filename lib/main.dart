@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
@@ -335,7 +334,7 @@ void _testEncryptAndDecrypt(
     }
     final cipherText = rsaEncrypt(rsaPair.publicKey, plaintext, scheme);
     if (verbose) {
-      //print('\nPlaintext:\n"$plaintext"');
+      // print('\nPlaintext:\n"$plaintext"');
       print('Ciphertext:\n${bin2hex(cipherText, wrap: 64)}');
     }
 
@@ -343,9 +342,9 @@ void _testEncryptAndDecrypt(
 
     if (isUint8ListEqual(decryptedBytes, plaintext)) {
       if (verbose) {
-        print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
+        // print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
       }
-      print('Decrypt ($scheme): success');
+      // print('Decrypt ($scheme): success');
     } else {
       print(plaintext);
       print(decryptedBytes);
@@ -392,14 +391,17 @@ void main(List<String> args) {
 
   // Use the key pair
 
-  final plaintext = (longText) ? longPlaintext : shortPlaintext;
+  const plaintext =
+      "{\"card_number\":\"1111222233334444\",\"card_holder\":\"NguyenVanA\",\"CVV\":888,\"expired_date\":\"02/2030\"}";
   if (verbose) {
+    print('\n\n\n\n\n');
+    print('=====Start program============\n\n\n\n\n');
     print('Plaintext: $plaintext\n');
   }
   final bytes = utf8.encode(plaintext);
 
-  _testSignAndVerify(rsaPair, Uint8List.fromList(bytes), verbose);
-
+  // _testSignAndVerify(rsaPair, Uint8List.fromList(bytes), verbose);
+  print("PlanText: $plaintext");
   _testEncryptAndDecrypt(
-      rsaPair, AsymBlockCipherToUse.rsa, Uint8List.fromList(bytes), verbose);
+      rsaPair, AsymBlockCipherToUse.rsa, Uint8List.fromList(bytes), true);
 }
