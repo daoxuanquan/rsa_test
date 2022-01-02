@@ -24,9 +24,7 @@ void _registerKeyGenerators(FactoryRegistry registry) {
   registry.register(RSAKeyGenerator.factoryConfig);
 }
 
-void _registerPaddings(FactoryRegistry registry) {
-  registry.register(PKCS7Padding.factoryConfig);
-}
+void _registerPaddings(FactoryRegistry registry) {}
 
 void _registerRandoms(FactoryRegistry registry) {
   registry.register(AutoSeedBlockCtrRandom.factoryConfig);
