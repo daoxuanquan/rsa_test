@@ -9,7 +9,6 @@ void registerFactories(FactoryRegistry registry) {
   _registerKeyGenerators(registry);
   _registerPaddings(registry);
   _registerRandoms(registry);
-  _registerSigners(registry);
 }
 
 void _registerAsymmetricCiphers(FactoryRegistry registry) {
@@ -33,8 +32,4 @@ void _registerRandoms(FactoryRegistry registry) {
   registry.register(AutoSeedBlockCtrRandom.factoryConfig);
   registry.register(BlockCtrRandom.factoryConfig);
   registry.register(FortunaRandom.factoryConfig);
-}
-
-void _registerSigners(FactoryRegistry registry) {
-  registry.register(RSASigner.factoryConfig);
 }

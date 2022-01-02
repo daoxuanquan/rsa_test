@@ -56,56 +56,6 @@ AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
   return AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey>(myPublic, myPrivate);
 }
 
-//================================================================
-// Signing and verifying
-
-//----------------------------------------------------------------
-/// Use an RSA private key to create a signature.
-
-Uint8List rsaSign(RSAPrivateKey privateKey, Uint8List dataToSign) {
-  //final signer = Signer('SHA-256/RSA'); // Get using registry
-  final signer = RSASigner(SHA256Digest(), '0609608648016503040201');
-
-  // '0609608648016503040201' is the BER encoding of the Object Identifier
-  // 2.16.840.1.101.3.4.2.1 that identifies the SHA-256 digest algorithm.
-  // <http://oid-info.com/get/2.16.840.1.101.3.4.2.1>
-
-  // See _DIGEST_IDENTIFIER_HEXES in RSASigner for correct hex values to use
-  // IMPORTANT: the correct digest identifier hex value must be used,
-  // corresponding to the digest algorithm, otherwise the signature won't
-  // verify.
-
-  signer.init(true, PrivateKeyParameter<RSAPrivateKey>(privateKey));
-
-  final sig = signer.generateSignature(dataToSign);
-
-  return sig.bytes;
-}
-
-//----------------------------------------------------------------
-/// Use an RSA public key to verify a signature.
-
-bool rsaVerify(
-    RSAPublicKey publicKey, Uint8List signedData, Uint8List signature) {
-  final sig = RSASignature(signature);
-  //final signer = Signer('SHA-256/RSA'); // Get using registry
-  final verifier = RSASigner(SHA256Digest(), '0609608648016503040201');
-  // See _DIGEST_IDENTIFIER_HEXES in RSASigner for correct hex values to use
-  // IMPORTANT: the correct digest identifier hex value must be used,
-  // corresponding to the digest algorithm, otherwise the signature won't
-  // verify.
-
-  verifier.init(false, PublicKeyParameter<RSAPublicKey>(publicKey));
-
-  return verifier.verifySignature(signedData, sig);
-}
-
-//================================================================
-// Encryption and decryption
-
-//----------------------------------------------------------------
-/// Schemes to use to encrypt/decrypt
-///
 /// rsa = use RSAEngine without an Asymmetric Block Cipher.
 
 enum AsymBlockCipherToUse { rsa }
@@ -284,43 +234,6 @@ bool isUint8ListEqual(Uint8List a, Uint8List b) {
   }
   return true;
 }
-
-//================================================================
-
-void _testSignAndVerify(AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> rsaPair,
-    Uint8List bytesToSign, bool verbose) {
-  final signatureBytes = rsaSign(rsaPair.privateKey, bytesToSign);
-  if (verbose) {
-    print('Signature:\n${bin2hex(signatureBytes, wrap: 64)}');
-  }
-
-  if (rsaVerify(rsaPair.publicKey, bytesToSign, signatureBytes)) {
-    print('Signature verify: success');
-  } else {
-    print('fail: signature did not verify');
-  }
-  if (rsaVerify(
-      rsaPair.publicKey, tamperWithData(bytesToSign), signatureBytes)) {
-    print('fail: signature verifies when data was modified');
-  } else {
-    print('Signature verify: detected tampered text successfully');
-  }
-
-  try {
-    if (rsaVerify(
-        rsaPair.publicKey, bytesToSign, tamperWithData(signatureBytes))) {
-      print('fail: signature verifies when signature was modified');
-    } else {
-      print('Signature verify: detected tampered signature successfully');
-    }
-  } catch (e, st) {
-    print('fail: signature validation: threw exception: ${e.runtimeType}');
-    if (verbose) {
-      print('$e\n$st\n');
-    }
-  }
-}
-
 //----------------------------------------------------------------
 
 void _testEncryptAndDecrypt(

@@ -28,5 +28,3 @@ export 'package:test_rsa_lib/paddings/pkcs7.dart';
 export 'package:test_rsa_lib/random/auto_seed_block_ctr_random.dart';
 export 'package:test_rsa_lib/random/block_ctr_random.dart';
 export 'package:test_rsa_lib/random/fortuna_random.dart';
-
-export 'package:test_rsa_lib/signers/rsa_signer.dart';
