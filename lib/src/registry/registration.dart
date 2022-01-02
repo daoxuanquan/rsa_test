@@ -16,7 +16,6 @@ void _registerAsymmetricCiphers(FactoryRegistry registry) {
   registry.register(RSAEngine.factoryConfig);
 }
 
-
 void _registerDigests(FactoryRegistry registry) {
   registry.register(SHA1Digest.factoryConfig);
   registry.register(SHA256Digest.factoryConfig);
@@ -26,10 +25,8 @@ void _registerKeyGenerators(FactoryRegistry registry) {
   registry.register(RSAKeyGenerator.factoryConfig);
 }
 
-
 void _registerPaddings(FactoryRegistry registry) {
   registry.register(PKCS7Padding.factoryConfig);
-  registry.register(ISO7816d4Padding.factoryConfig);
 }
 
 void _registerRandoms(FactoryRegistry registry) {
@@ -41,4 +38,3 @@ void _registerRandoms(FactoryRegistry registry) {
 void _registerSigners(FactoryRegistry registry) {
   registry.register(RSASigner.factoryConfig);
 }
-
