@@ -11,10 +11,6 @@ export 'package:test_rsa_lib/impl.dart';
 export 'package:test_rsa_lib/asymmetric/rsa.dart';
 // block
 export 'package:test_rsa_lib/block/aes.dart';
-// digests
-export 'package:test_rsa_lib/digests/sha1.dart';
-
-export 'package:test_rsa_lib/digests/sha256.dart';
 
 // key_generators
 export 'package:test_rsa_lib/key_generators/api.dart';
