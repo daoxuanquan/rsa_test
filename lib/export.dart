@@ -10,7 +10,6 @@ export 'package:test_rsa_lib/impl.dart';
 // asymmetric
 export 'package:test_rsa_lib/asymmetric/rsa.dart';
 // block
-export 'package:test_rsa_lib/block/aes_fast.dart';
 export 'package:test_rsa_lib/block/aes.dart';
 // digests
 export 'package:test_rsa_lib/digests/sha1.dart';
