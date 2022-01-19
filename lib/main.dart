@@ -61,16 +61,15 @@ enum AsymBlockCipherToUse { rsa }
 
 //----------------------------------------------------------------
 
-AsymmetricBlockCipher _createBlockCipher(AsymBlockCipherToUse scheme) {
-  switch (scheme) {
-    case AsymBlockCipherToUse.rsa:
-      return RSAEngine();
-  }
+AsymmetricBlockCipher _createBlockCipher() {
+  return RSAEngine();
 }
 
-Uint8List rsaEncrypt(RSAPublicKey myPublic, Uint8List dataToEncrypt,
-    AsymBlockCipherToUse scheme) {
-  var encryptor = _createBlockCipher(scheme);
+Uint8List rsaEncrypt(
+  RSAPublicKey myPublic,
+  Uint8List dataToEncrypt,
+) {
+  var encryptor = _createBlockCipher();
 
   encryptor.init(
     true,
@@ -82,9 +81,11 @@ Uint8List rsaEncrypt(RSAPublicKey myPublic, Uint8List dataToEncrypt,
 
 //----------------------------------------------------------------
 
-Uint8List rsaDecrypt(RSAPrivateKey myPrivate, Uint8List cipherText,
-    AsymBlockCipherToUse scheme) {
-  var decryptor = _createBlockCipher(scheme);
+Uint8List rsaDecrypt(
+  RSAPrivateKey myPrivate,
+  Uint8List cipherText,
+) {
+  var decryptor = _createBlockCipher();
 
   decryptor.init(
     false,
@@ -212,20 +213,19 @@ bool isUint8ListEqual(Uint8List a, Uint8List b) {
 
 void _testEncryptAndDecrypt(
     AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> rsaPair,
-    AsymBlockCipherToUse scheme,
     Uint8List plaintext,
     bool verbose) {
   try {
     if (verbose) {
-      print('\nEncrypting with $scheme:');
+      print('\nEncrypting with rsa:');
     }
-    final cipherText = rsaEncrypt(rsaPair.publicKey, plaintext, scheme);
+    final cipherText = rsaEncrypt(rsaPair.publicKey, plaintext);
     if (verbose) {
       // print('\nPlaintext:\n"$plaintext"');
       print('Ciphertext:\n${bin2hex(cipherText, wrap: 64)}');
     }
 
-    final decryptedBytes = rsaDecrypt(rsaPair.privateKey, cipherText, scheme);
+    final decryptedBytes = rsaDecrypt(rsaPair.privateKey, cipherText);
 
     if (isUint8ListEqual(decryptedBytes, plaintext)) {
       if (verbose) {
@@ -249,27 +249,7 @@ void _testEncryptAndDecrypt(
 //----------------------------------------------------------------
 
 void main(List<String> args) {
-  var longText = false;
-  var verbose = false;
-  for (final arg in args) {
-    switch (arg) {
-      case '--long':
-      case '-l':
-        longText = true;
-        break;
-      case '--help':
-      case '-h':
-        print('Usage: rsa-demo [-l] [-v] [-h]');
-        return;
-      case '--verbose':
-      case '-v':
-        verbose = true;
-        break;
-      default:
-        print('Usage error: unknown argument: $arg (-h for help)');
-        return;
-    }
-  }
+  var verbose = true;
 
   // Generate an RSA key pair
 
@@ -287,8 +267,5 @@ void main(List<String> args) {
   }
   final bytes = utf8.encode(plaintext);
 
-  // _testSignAndVerify(rsaPair, Uint8List.fromList(bytes), verbose);
-  print("PlanText: $plaintext");
-  _testEncryptAndDecrypt(
-      rsaPair, AsymBlockCipherToUse.rsa, Uint8List.fromList(bytes), true);
+  _testEncryptAndDecrypt(rsaPair, Uint8List.fromList(bytes), true);
 }

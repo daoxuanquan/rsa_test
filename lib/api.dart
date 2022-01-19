@@ -33,5 +33,4 @@ part 'src/api/public_key.dart';
 part 'src/api/public_key_parameter.dart';
 part 'src/api/registry_factory_exception.dart';
 part 'src/api/signature.dart';
-part 'src/api/stream_cipher.dart';
 part 'src/api/xof.dart';
