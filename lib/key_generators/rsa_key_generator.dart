@@ -2,6 +2,8 @@
 
 library impl.key_generator.rsa_key_generator;
 
+import 'dart:math';
+
 import 'package:test_rsa_lib/api.dart';
 import 'package:test_rsa_lib/asymmetric/api.dart';
 import 'package:test_rsa_lib/key_generators/api.dart';
@@ -15,7 +17,6 @@ class RSAKeyGenerator implements KeyGenerator {
   static final FactoryConfig factoryConfig =
       StaticFactoryConfig(KeyGenerator, 'RSA', () => RSAKeyGenerator());
 
-  late SecureRandom _random;
   late RSAKeyGeneratorParameters _params;
 
   @override
@@ -24,10 +25,8 @@ class RSAKeyGenerator implements KeyGenerator {
   @override
   void init(CipherParameters params) {
     if (params is ParametersWithRandom) {
-      _random = params.random;
       _params = params.parameters as RSAKeyGeneratorParameters;
     } else {
-      _random = SecureRandom();
       _params = params as RSAKeyGeneratorParameters;
     }
 
@@ -57,7 +56,7 @@ class RSAKeyGenerator implements KeyGenerator {
 
     // generate p, prime and (p-1) relatively prime to e
     while (true) {
-      p = generateProbablePrime(pbitlength, 1, _random);
+      p = generateProbablePrime(pbitlength, 1);
 
       if (p % e == BigInt.one) {
         continue;
@@ -76,9 +75,9 @@ class RSAKeyGenerator implements KeyGenerator {
     while (true) {
       // generate q, prime and (q-1) relatively prime to e, and not equal to p
       while (true) {
-        q = generateProbablePrime(qbitlength, 1, _random);
+        q = generateProbablePrime(qbitlength, 1);
 
-        if ((q - p).abs().bitLength < mindiffbits) {
+        if (q == p) {
           continue;
         }
 
@@ -284,9 +283,10 @@ bool _millerRabin(BigInt b, int t) {
 
 /// test primality with certainty >= 1-.5^t */
 bool _isProbablePrime(BigInt b, int t) {
-  // Implementation borrowed from bignum.BigIntegerDartvm.
+  // review bignum.BigIntegerDartvm
   var i;
   var x = b.abs();
+  // Kiểm tra số đó có nằm trong list lowprimes
   if (b <= _lowprimes.last) {
     for (i = 0; i < _lowprimes.length; ++i) {
       if (b == _lowprimes[i]) return true;
@@ -310,14 +310,15 @@ bool _isProbablePrime(BigInt b, int t) {
   return _millerRabin(x, t);
 }
 
-BigInt generateProbablePrime(int bitLength, int certainty, SecureRandom rnd) {
+BigInt generateProbablePrime(int bitLength, int certainty) {
   if (bitLength < 2) {
     return BigInt.one;
   }
-
-  var candidate = rnd.nextBigInteger(bitLength);
+  print("object $certainty");
+  var candidate = BigInt.from(Random().nextInt(pow(2.0, bitLength).toInt()));
 
   // force MSB set
+  // msb: most significant bit (bit y nghia nhat)
   if (!_testBit(candidate, bitLength - 1)) {
     candidate |= BigInt.one << (bitLength - 1);
   }

@@ -25,16 +25,16 @@ in culpa qui officia deserunt mollit anim id est laborum.''';
 /// Generate an RSA key pair.
 
 AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
-    SecureRandom secureRandom,
     {int bitLength = 2048}) {
   // Create an RSA key generator and initialize it
 
   // final keyGen = KeyGenerator('RSA'); // Get using registry
   final keyGen = RSAKeyGenerator(); // Get directly
 
-  keyGen.init(ParametersWithRandom(
-      RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64),
-      secureRandom));
+  keyGen.init(
+    ParametersWithRandom(
+        RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64)),
+  );
 
   // Use the generator
 
@@ -119,31 +119,6 @@ Uint8List _processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
       ? output
       : output.sublist(0, outputOffset);
 }
-
-//================================================================
-// Supporting functions
-//
-// These are not a part of RSA, so different implementations may do these
-// things differently.
-
-//----------------------------------------------------------------
-
-SecureRandom getSecureRandom() {
-// Create a secure random number generator and seed it with random bytes
-
-//final result = SecureRandom('Fortuna'); // Get using registry
-  final secureRandom = FortunaRandom(); // Get directly
-
-  secureRandom.seed(
-      KeyParameter(Platform.instance.platformEntropySource().getBytes(32)));
-
-  return secureRandom;
-}
-
-//----------------------------------------------------------------
-// Modify one bit.
-//
-// Returns a new Uint8List with the modified bytes.
 
 Uint8List tamperWithData(Uint8List original) {
 // Tampered with data does not verify
@@ -298,7 +273,7 @@ void main(List<String> args) {
 
   // Generate an RSA key pair
 
-  final rsaPair = generateRSAkeyPair(getSecureRandom(), bitLength: 18);
+  final rsaPair = generateRSAkeyPair(bitLength: 18);
   print(dumpRsaKeys(rsaPair, verbose: true));
 
   // Use the key pair

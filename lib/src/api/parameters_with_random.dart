@@ -8,7 +8,6 @@ part of api;
 class ParametersWithRandom<UnderlyingParameters extends CipherParameters>
     implements CipherParameters {
   final UnderlyingParameters parameters;
-  final SecureRandom random;
 
-  ParametersWithRandom(this.parameters, this.random);
+  ParametersWithRandom(this.parameters);
 }
