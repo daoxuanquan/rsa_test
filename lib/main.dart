@@ -298,7 +298,7 @@ void main(List<String> args) {
 
   // Generate an RSA key pair
 
-  final rsaPair = generateRSAkeyPair(getSecureRandom(), bitLength: 1024);
+  final rsaPair = generateRSAkeyPair(getSecureRandom(), bitLength: 18);
   print(dumpRsaKeys(rsaPair, verbose: true));
 
   // Use the key pair
