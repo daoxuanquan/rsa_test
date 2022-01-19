@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 // When not using the registry:
 import 'package:test_rsa_lib/export.dart';
-import 'package:test_rsa_lib/src/platform_check/platform_check.dart';
 
 //================================================================
 // Test data
@@ -98,6 +97,7 @@ Uint8List rsaDecrypt(
 //----------------------------------------------------------------
 
 Uint8List _processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
+  // tính số khối
   final numBlocks = input.length ~/ engine.inputBlockSize +
       ((input.length % engine.inputBlockSize != 0) ? 1 : 0);
 
@@ -106,6 +106,7 @@ Uint8List _processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
   var inputOffset = 0;
   var outputOffset = 0;
   while (inputOffset < input.length) {
+    // tính kích thước của từng đoạn dữ liệu
     final chunkSize = (inputOffset + engine.inputBlockSize <= input.length)
         ? engine.inputBlockSize
         : input.length - inputOffset;
@@ -181,20 +182,6 @@ String bin2hex(Uint8List bytes, {String? separator, int? wrap}) {
 }
 
 //----------------------------------------------------------------
-// Decode a hexadecimal string into a sequence of bytes.
-
-Uint8List hex2bin(String hexStr) {
-  if (hexStr.length % 2 != 0) {
-    throw const FormatException('not an even number of hexadecimal characters');
-  }
-  final result = Uint8List(hexStr.length ~/ 2);
-  for (var i = 0; i < result.length; i++) {
-    result[i] = int.parse(hexStr.substring(2 * i, 2 * (i + 1)), radix: 16);
-  }
-  return result;
-}
-
-//----------------------------------------------------------------
 /// Tests two Uint8List for equality.
 ///
 /// Returns true if they contain all the same bytes. Otherwise false.
@@ -221,20 +208,17 @@ void _testEncryptAndDecrypt(
     }
     final cipherText = rsaEncrypt(rsaPair.publicKey, plaintext);
     if (verbose) {
-      // print('\nPlaintext:\n"$plaintext"');
       print('Ciphertext:\n${bin2hex(cipherText, wrap: 64)}');
+      print("cipherText: $cipherText");
     }
 
     final decryptedBytes = rsaDecrypt(rsaPair.privateKey, cipherText);
 
     if (isUint8ListEqual(decryptedBytes, plaintext)) {
       if (verbose) {
-        // print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
+        print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
       }
-      // print('Decrypt ($scheme): success');
     } else {
-      print(plaintext);
-      print(decryptedBytes);
       print(
           'Decrypted:\n"${utf8.decode(decryptedBytes, allowMalformed: true)}"');
       print('fail: decrypted does not match plaintext');
@@ -266,6 +250,6 @@ void main(List<String> args) {
     print('Plaintext: $plaintext\n');
   }
   final bytes = utf8.encode(plaintext);
-
+  print(bytes);
   _testEncryptAndDecrypt(rsaPair, Uint8List.fromList(bytes), true);
 }

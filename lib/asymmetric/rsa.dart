@@ -90,16 +90,16 @@ class RSAEngine extends BaseAsymmetricBlockCipher {
   }
 
   BigInt _convertInput(Uint8List inp, int inpOff, int len) {
+    // lenght của list int8
     var inpLen = inp.length;
-
     if (inpLen < inpOff + len) {
       throw ArgumentError.value(inpOff, 'inpOff',
-          'Not enough data for RSA cipher (length=$len, available=$inpLen)');
+          'Không đủ data để mã hoá (length=$len, available=$inpLen)');
     }
 
     if (inputBlockSize + 1 < len) {
-      throw ArgumentError.value(len, 'len',
-          'Too large for maximum RSA cipher input block size ($inputBlockSize)');
+      throw ArgumentError.value(
+          len, 'len', 'Vượt quá kích thước inputsize ($inputBlockSize)');
     }
 
     var res = utils.decodeBigIntWithSign(1, inp.sublist(inpOff, inpOff + len));

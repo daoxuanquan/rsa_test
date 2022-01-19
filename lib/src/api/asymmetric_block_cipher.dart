@@ -2,32 +2,25 @@
 
 part of api;
 
-/// Asymmetric block cipher engines are expected to conform to this interface.
 abstract class AsymmetricBlockCipher extends Algorithm {
-  /// Create the cipher specified by the standard [algorithmName].
+  // tạo ra block cipher ddựa trên algorithmName
   factory AsymmetricBlockCipher(String algorithmName) =>
       registry.create<AsymmetricBlockCipher>(algorithmName);
 
-  /// Get this ciphers's maximum input block size.
+  // lấy kichs thước block tối đa
   int get inputBlockSize;
 
-  /// Get this ciphers's maximum output block size.
+  // lấy kích thước block output tối đa
   int get outputBlockSize;
 
-  /// Reset the cipher to its original state.
-  void reset();
-
-  /// Init the cipher with its initialization [params]. The type of [CipherParameters] depends on the algorithm being used (see
-  /// the documentation of each implementation to find out more).
-  ///
-  /// Use the argument [forEncryption] to tell the cipher if you want to encrypt or decrypt data.
+  /// Sử dụng đối số [forEncryption] để cho mật mã biết bạn muốn mã hóa hay giải mã dữ liệu.
   void init(bool forEncryption, CipherParameters params);
 
-  /// Process a whole block of [data] at once, returning the result in a byte array.
+  /// Xử lý toàn bộ khối [data] cùng một lúc, trả về kết quả trong một mảng byte.
   Uint8List process(Uint8List data);
 
-  /// Process a block of [len] bytes given by [inp] and starting at offset [inpOff] and put the resulting cipher text in [out]
-  /// beginning at position [outOff].
+  /// xử lý một khối [len] bytes cho bởi [inp] bắt đầu tại offset [inpOff] luw output cipher text vào [out]
+  /// bắt đầu tại vị trí [outOff].
   ///
   /// This method returns the total bytes put in the output buffer.
   int processBlock(

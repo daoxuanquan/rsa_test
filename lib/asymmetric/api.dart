@@ -7,7 +7,7 @@ import 'dart:typed_data';
 import 'package:test_rsa_lib/api.dart';
 
 /// Base class for asymmetric keys in RSA
-abstract class RSAAsymmetricKey implements AsymmetricKey {
+abstract class RSAAsymmetricKey {
   // The parameters of this key
   final BigInt? modulus;
   final BigInt? exponent;
@@ -20,7 +20,7 @@ abstract class RSAAsymmetricKey implements AsymmetricKey {
 }
 
 /// Private keys in RSA
-class RSAPrivateKey extends RSAAsymmetricKey implements PrivateKey {
+class RSAPrivateKey extends RSAAsymmetricKey {
   // The secret prime factors of n
   final BigInt? p;
   final BigInt? q;
@@ -87,7 +87,7 @@ class RSAPrivateKey extends RSAAsymmetricKey implements PrivateKey {
 }
 
 /// Public keys in RSA
-class RSAPublicKey extends RSAAsymmetricKey implements PublicKey {
+class RSAPublicKey extends RSAAsymmetricKey {
   /// Create an RSA public key for the given parameters.
   RSAPublicKey(BigInt modulus, BigInt exponent) : super(modulus, exponent);
 

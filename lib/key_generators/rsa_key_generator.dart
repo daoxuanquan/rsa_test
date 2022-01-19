@@ -116,6 +116,7 @@ class RSAKeyGenerator implements KeyGenerator {
     var pSub1 = (p - BigInt.one);
     var qSub1 = (q - BigInt.one);
     var phi = (pSub1 * qSub1);
+    // ed - 1 phải chia hết cho phi// nên ta tính d sẽ bằng ngược đảo modulo của e mod phi = 1
     var d = e.modInverse(phi);
 
     return AsymmetricKeyPair(RSAPublicKey(n, e), RSAPrivateKey(n, d, p, q, e));
