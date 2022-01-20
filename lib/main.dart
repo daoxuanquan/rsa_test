@@ -1,45 +1,37 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:convert' show utf8;
-// When not using the registry:
-import 'package:test_rsa_lib/export.dart';
-
-//================================================================
-// Test data
-
-const shortPlaintext = 'What hath God wrought!';
-
-const longPlaintext = '''
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-in culpa qui officia deserunt mollit anim id est laborum.''';
-
-//================================================================
-// Key generation
-
-//----------------------------------------------------------------
-/// Generate an RSA key pair.
+import '/export.dart';
 
 AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
-    {int bitLength = 2048}) {
-  // Create an RSA key generator and initialize it
-
-  // final keyGen = KeyGenerator('RSA'); // Get using registry
-  final keyGen = RSAKeyGenerator(); // Get directly
+    {int bitLength = 2048,
+    BigInt? initP,
+    BigInt? initQ,
+    BigInt? initN,
+    BigInt? initE,
+    BigInt? initd}) {
+  final keyGen = RSAKeyGenerator();
 
   keyGen.init(
     ParametersWithRandom(
         RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64)),
   );
-
+  var pair;
   // Use the generator
-
-  final pair = keyGen.generateKeyPair();
+  if (initN != null &&
+      initP != null &&
+      initQ != null &&
+      initd != null &&
+      initE != null) {
+    print("run key nhap");
+    pair = keyGen.generateKeyPair(
+        initP: initP, initE: initE, initQ: initQ, initd: initd, initN: initN);
+  } else {
+    print("run key nhap");
+    pair = keyGen.generateKeyPair(
+        initP: initP, initE: initE, initQ: initQ, initd: initd, initN: initN);
+  }
 
   // Examine the generated key-pair
 
@@ -211,7 +203,6 @@ String? _testEncryptAndDecrypt(
     final cipherText = rsaEncrypt(rsaPair.publicKey, plaintext);
     if (verbose) {
       print('Ciphertext:\n${bin2hex(cipherText, wrap: 64)}');
-      print("cipherText: $cipherText");
       return bin2hex(cipherText, wrap: 64);
     }
 
@@ -234,27 +225,39 @@ String? _testEncryptAndDecrypt(
     }
   }
 }
+
 //----------------------------------------------------------------
-
-String? main() {
+String? encodePaymentCard(
+    String carNumber, String cardHolder, int cvv, String expiredDate) {
   var verbose = true;
-
+  final BigInt keyN = BigInt.from(2476163479);
+  final BigInt keyD = BigInt.from(308180633);
+  final BigInt keyP = BigInt.from(61949);
+  final BigInt keyQ = BigInt.from(39971);
+  final BigInt keyE = BigInt.from(65537);
   // Generate an RSA key pair
 
-  final rsaPair = generateRSAkeyPair(bitLength: 32);
-  print(dumpRsaKeys(rsaPair, verbose: true));
-
+  final rsaPair = generateRSAkeyPair(
+      bitLength: 32,
+      initd: keyD,
+      initQ: keyQ,
+      initP: keyP,
+      initE: keyE,
+      initN: keyN);
+  // final rsaPair = generateRSAkeyPair(
+  //   bitLength: 32,
+  // );
+  print(dumpRsaKeys(rsaPair, verbose: verbose));
+  print(rsaPair.publicKey);
   // Use the key pair
 
-  const plaintext =
-      "{\"card_number\":\"1111222233334444\",\"card_holder\":\"NguyenVanA\",\"CVV\":888,\"expired_date\":\"02/2030\"}";
-  if (verbose) {
-    print('\n\n\n\n\n');
-    print('=====Start program============\n\n\n\n\n');
-    print('Plaintext: $plaintext\n');
-  }
-  final bytes = utf8.encode(plaintext);
-  print(bytes);
+  var stringCard =
+      '{"card_number":"$carNumber","card_holder":"$cardHolder","CVV":$cvv,"expired_date": "$expiredDate"}';
+
+  print('Plaintext: $stringCard\n');
+
+  final bytes = utf8.encode(stringCard);
+
   return _testEncryptAndDecrypt(rsaPair, Uint8List.fromList(bytes), true);
 }
 
@@ -272,4 +275,8 @@ void main_test() async {
       event.response.close();
     }
   });
+}
+
+void main() {
+  encodePaymentCard("carNumber", "cardHolder", 1, "expiredDate");
 }

@@ -46,89 +46,94 @@ class RSAKeyGenerator implements KeyGenerator {
       BigInt? initN,
       BigInt? initE,
       BigInt? initd}) {
+    print("$initd $initQ $initN, $initE, $initP");
     BigInt p, q, n, e;
     if (initP != null &&
         initQ != null &&
         initE != null &&
         initN != null &&
         initd != null) {
+      print("tạo key thủ công");
       return AsymmetricKeyPair(RSAPublicKey(initN, initE),
           RSAPrivateKey(initN, initd, initP, initQ, initE));
-    }
-    // p and q values should have a length of half the strength in bits
-    var strength = _params.bitStrength;
-    var pbitlength = (strength + 1) ~/ 2;
-    var qbitlength = strength - pbitlength;
-    var mindiffbits = strength ~/ 3;
+    } else {
+      print("tạo key tự đông");
+      // p and q values should have a length of half the strength in bits
+      var strength = _params.bitStrength;
+      var pbitlength = (strength + 1) ~/ 2;
+      var qbitlength = strength - pbitlength;
+      var mindiffbits = strength ~/ 3;
 
-    e = _params.publicExponent;
+      e = _params.publicExponent;
 
-    // tạo ra số nguyên tố p, nguyên tô cùng nhau với e
-    while (true) {
-      p = generateProbablePrime(pbitlength, 1);
-
-      if (p % e == BigInt.one) {
-        continue;
-      }
-
-      if (!_isProbablePrime(p, _params.certainty)) {
-        continue;
-      }
-
-      if (e.gcd(p - BigInt.one) == BigInt.one) {
-        break;
-      }
-    }
-
-    // generate a modulus of the required length
-    while (true) {
-      // generate q, prime and (q-1) relatively prime to e, and not equal to p
+      // tạo ra số nguyên tố p, nguyên tô cùng nhau với e
       while (true) {
-        q = generateProbablePrime(qbitlength, 1);
+        p = generateProbablePrime(pbitlength, 1);
 
-        if (q == p) {
+        if (p % e == BigInt.one) {
           continue;
         }
 
-        if (q % e == BigInt.one) {
+        if (!_isProbablePrime(p, _params.certainty)) {
           continue;
         }
 
-        if (!_isProbablePrime(q, _params.certainty)) {
-          continue;
-        }
-
-        if (e.gcd(q - BigInt.one) == BigInt.one) {
+        if (e.gcd(p - BigInt.one) == BigInt.one) {
           break;
         }
       }
 
-      // calculate the modulus
-      n = (p * q);
+      // generate a modulus of the required length
+      while (true) {
+        // generate q, prime and (q-1) relatively prime to e, and not equal to p
+        while (true) {
+          q = generateProbablePrime(qbitlength, 1);
 
-      if (n.bitLength == _params.bitStrength) {
-        break;
+          if (q == p) {
+            continue;
+          }
+
+          if (q % e == BigInt.one) {
+            continue;
+          }
+
+          if (!_isProbablePrime(q, _params.certainty)) {
+            continue;
+          }
+
+          if (e.gcd(q - BigInt.one) == BigInt.one) {
+            break;
+          }
+        }
+
+        // calculate the modulus
+        n = (p * q);
+
+        if (n.bitLength == _params.bitStrength) {
+          break;
+        }
+
+        // if we get here our primes aren't big enough, make the largest of the two p and try again
+        p = (p.compareTo(q) > 0) ? p : q;
       }
 
-      // if we get here our primes aren't big enough, make the largest of the two p and try again
-      p = (p.compareTo(q) > 0) ? p : q;
+      // Swap p and q if necessary
+      if (p < q) {
+        var swap = p;
+        p = q;
+        q = swap;
+      }
+
+      // calculate the private exponent
+      var pSub1 = (p - BigInt.one);
+      var qSub1 = (q - BigInt.one);
+      var phi = (pSub1 * qSub1);
+      // ed - 1 phải chia hết cho phi// nên ta tính d sẽ bằng ngược đảo modulo của e mod phi = 1
+      var d = e.modInverse(phi);
+
+      return AsymmetricKeyPair(
+          RSAPublicKey(n, e), RSAPrivateKey(n, d, p, q, e));
     }
-
-    // Swap p and q if necessary
-    if (p < q) {
-      var swap = p;
-      p = q;
-      q = swap;
-    }
-
-    // calculate the private exponent
-    var pSub1 = (p - BigInt.one);
-    var qSub1 = (q - BigInt.one);
-    var phi = (pSub1 * qSub1);
-    // ed - 1 phải chia hết cho phi// nên ta tính d sẽ bằng ngược đảo modulo của e mod phi = 1
-    var d = e.modInverse(phi);
-
-    return AsymmetricKeyPair(RSAPublicKey(n, e), RSAPrivateKey(n, d, p, q, e));
   }
 }
 
