@@ -40,9 +40,21 @@ class RSAKeyGenerator implements KeyGenerator {
   }
 
   @override
-  AsymmetricKeyPair generateKeyPair() {
+  AsymmetricKeyPair generateKeyPair(
+      {BigInt? initP,
+      BigInt? initQ,
+      BigInt? initN,
+      BigInt? initE,
+      BigInt? initd}) {
     BigInt p, q, n, e;
-
+    if (initP != null &&
+        initQ != null &&
+        initE != null &&
+        initN != null &&
+        initd != null) {
+      return AsymmetricKeyPair(RSAPublicKey(initN, initE),
+          RSAPrivateKey(initN, initd, initP, initQ, initE));
+    }
     // p and q values should have a length of half the strength in bits
     var strength = _params.bitStrength;
     var pbitlength = (strength + 1) ~/ 2;
@@ -51,10 +63,7 @@ class RSAKeyGenerator implements KeyGenerator {
 
     e = _params.publicExponent;
 
-    // TODO Consider generating safe primes for p, q (see DHParametersHelper.generateSafePrimes)
-    // (then p-1 and q-1 will not consist of only small factors - see "Pollard's algorithm")
-
-    // generate p, prime and (p-1) relatively prime to e
+    // tạo ra số nguyên tố p, nguyên tô cùng nhau với e
     while (true) {
       p = generateProbablePrime(pbitlength, 1);
 

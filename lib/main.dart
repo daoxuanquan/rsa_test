@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'dart:convert';
+import 'dart:io';
+import 'dart:convert' show utf8;
 // When not using the registry:
 import 'package:test_rsa_lib/export.dart';
 
@@ -198,7 +200,7 @@ bool isUint8ListEqual(Uint8List a, Uint8List b) {
 }
 //----------------------------------------------------------------
 
-void _testEncryptAndDecrypt(
+String? _testEncryptAndDecrypt(
     AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> rsaPair,
     Uint8List plaintext,
     bool verbose) {
@@ -210,6 +212,7 @@ void _testEncryptAndDecrypt(
     if (verbose) {
       print('Ciphertext:\n${bin2hex(cipherText, wrap: 64)}');
       print("cipherText: $cipherText");
+      return bin2hex(cipherText, wrap: 64);
     }
 
     final decryptedBytes = rsaDecrypt(rsaPair.privateKey, cipherText);
@@ -217,6 +220,7 @@ void _testEncryptAndDecrypt(
     if (isUint8ListEqual(decryptedBytes, plaintext)) {
       if (verbose) {
         print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
+        return utf8.decode(decryptedBytes);
       }
     } else {
       print(
@@ -232,12 +236,12 @@ void _testEncryptAndDecrypt(
 }
 //----------------------------------------------------------------
 
-void main(List<String> args) {
+String? main() {
   var verbose = true;
 
   // Generate an RSA key pair
 
-  final rsaPair = generateRSAkeyPair(bitLength: 18);
+  final rsaPair = generateRSAkeyPair(bitLength: 32);
   print(dumpRsaKeys(rsaPair, verbose: true));
 
   // Use the key pair
@@ -251,5 +255,21 @@ void main(List<String> args) {
   }
   final bytes = utf8.encode(plaintext);
   print(bytes);
-  _testEncryptAndDecrypt(rsaPair, Uint8List.fromList(bytes), true);
+  return _testEncryptAndDecrypt(rsaPair, Uint8List.fromList(bytes), true);
+}
+
+void main_test() async {
+  final HttpServer server = await HttpServer.bind("localhost", 8080);
+
+  server.listen((HttpRequest event) async {
+    try {
+      print(event.uri);
+      await utf8
+          .decodeStream(event)
+          .then((data) => {print(data), event.response.write("main_test()")});
+      print(event);
+    } finally {
+      event.response.close();
+    }
+  });
 }
