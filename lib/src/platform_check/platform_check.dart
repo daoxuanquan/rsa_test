@@ -23,7 +23,6 @@ abstract class Platform {
     }
   }
 
-  /// Platform dependent entropy source.
   EntropySource platformEntropySource();
 }
 

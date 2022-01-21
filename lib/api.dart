@@ -1,19 +1,9 @@
-// See file LICENSE for more information.
-
-/// This is the API specification library for the Pointy Castle project.
-///
-/// It declares all abstract types used by the Pointy Castle library.
-/// In addition, it implements the factories mechanism that allows
-/// users to instantiate algorithms by their standard name.
 library api;
 
 import 'dart:typed_data';
-
 import 'src/registry/registry.dart';
 import 'src/utils.dart';
-
 part 'src/api/algorithm.dart';
-
 part 'src/api/asymmetric_block_cipher.dart';
 
 part 'src/api/asymmetric_key_pair.dart';

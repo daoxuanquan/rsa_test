@@ -1,5 +1,3 @@
-// See file LICENSE for more information.
-
 library impl.key_generator.rsa_key_generator;
 
 import 'dart:math';
@@ -112,18 +110,14 @@ class RSAKeyGenerator implements KeyGenerator {
         if (n.bitLength == _params.bitStrength) {
           break;
         }
-
-        // if we get here our primes aren't big enough, make the largest of the two p and try again
         p = (p.compareTo(q) > 0) ? p : q;
       }
-
       // Swap p and q if necessary
       if (p < q) {
         var swap = p;
         p = q;
         q = swap;
       }
-
       // calculate the private exponent
       var pSub1 = (p - BigInt.one);
       var qSub1 = (q - BigInt.one);
@@ -137,7 +131,6 @@ class RSAKeyGenerator implements KeyGenerator {
   }
 }
 
-/// [List] of low primes
 final List<BigInt> _lowprimes = [
   BigInt.from(2),
   BigInt.from(3),
@@ -244,7 +237,6 @@ final BigInt _bigTwo = BigInt.from(2);
 
 /// return index of lowest 1-bit in x, x < 2^31
 int _lbit(BigInt x) {
-  // Implementation borrowed from bignum.BigIntegerDartvm.
   if (x == BigInt.zero) return -1;
   var r = 0;
   while ((x & BigInt.from(0xffffffff)) == BigInt.zero) {
@@ -271,9 +263,7 @@ int _lbit(BigInt x) {
   return r;
 }
 
-/// true if probably prime (HAC 4.24, Miller-Rabin) */
 bool _millerRabin(BigInt b, int t) {
-  // Implementation borrowed from bignum.BigIntegerDartvm.
   var n1 = b - BigInt.one;
   var k = _lbit(n1);
   if (k <= 0) return false;
@@ -296,9 +286,7 @@ bool _millerRabin(BigInt b, int t) {
   return true;
 }
 
-/// test primality with certainty >= 1-.5^t */
 bool _isProbablePrime(BigInt b, int t) {
-  // review bignum.BigIntegerDartvm
   var i;
   var x = b.abs();
   // Kiểm tra số đó có nằm trong list lowprimes
@@ -332,7 +320,6 @@ BigInt generateProbablePrime(int bitLength, int certainty) {
   print("object $certainty");
   var candidate = BigInt.from(Random().nextInt(pow(2.0, bitLength).toInt()));
 
-  // force MSB set
   // msb: most significant bit (bit y nghia nhat)
   if (!_testBit(candidate, bitLength - 1)) {
     candidate |= BigInt.one << (bitLength - 1);

@@ -1,37 +1,22 @@
-// See file LICENSE for more information.
-
 library api.asymmetric;
 
 import 'dart:typed_data';
 
-import 'package:test_rsa_lib/api.dart';
+import '../api.dart';
 
-/// Base class for asymmetric keys in RSA
 abstract class RSAAsymmetricKey {
-  // The parameters of this key
   final BigInt? modulus;
   final BigInt? exponent;
 
-  /// Create an asymmetric key for the given domain parameters
   RSAAsymmetricKey(this.modulus, this.exponent);
 
-  /// Get modulus [n] = p·q
   BigInt? get n => modulus;
 }
 
-/// Private keys in RSA
 class RSAPrivateKey extends RSAAsymmetricKey {
-  // The secret prime factors of n
   final BigInt? p;
   final BigInt? q;
   BigInt? _pubExp;
-
-  /// Create an RSA private key for the given parameters.
-  ///
-  /// The optional public exponent parameter has been deprecated. It does not
-  /// have to be provided, because it can be calculated from the other values.
-  /// The optional parameter is retained for backward compatibility, but it
-  /// does not need to be provided.
 
   RSAPrivateKey(
       BigInt modulus,
@@ -41,35 +26,26 @@ class RSAPrivateKey extends RSAAsymmetricKey {
       [@Deprecated('Public exponent is calculated from the other values')
           BigInt? publicExponent])
       : super(modulus, privateExponent) {
-    // Check RSA relationship between p, q and modulus hold true.
-
     if (p! * q! != modulus) {
       throw ArgumentError.value('modulus inconsistent with RSA p and q');
     }
 
-    // Calculate the correct RSA public exponent
-
     _pubExp =
         privateExponent.modInverse(((p! - BigInt.one) * (q! - BigInt.one)));
 
-    // If explicitly provided, the public exponent value must be correct.
     if (publicExponent != null && publicExponent != _pubExp) {
       throw ArgumentError(
           'public exponent inconsistent with RSA private exponent, p and q');
     }
   }
 
-  /// Get private exponent [d] = e^-1
   @Deprecated('Use privateExponent.')
   BigInt? get d => exponent;
 
-  /// Get the private exponent (d)
   BigInt? get privateExponent => exponent;
 
-  /// Get the public exponent (e)
   BigInt? get publicExponent => _pubExp;
 
-  /// Get the public exponent (e)
   @Deprecated('Use publicExponent.')
   BigInt? get pubExponent => publicExponent;
 
@@ -86,12 +62,9 @@ class RSAPrivateKey extends RSAAsymmetricKey {
   int get hashCode => modulus.hashCode + privateExponent.hashCode;
 }
 
-/// Public keys in RSA
 class RSAPublicKey extends RSAAsymmetricKey {
-  /// Create an RSA public key for the given parameters.
   RSAPublicKey(BigInt modulus, BigInt exponent) : super(modulus, exponent);
 
-  /// Get public exponent [e]
   @Deprecated('Use get publicExponent')
   BigInt? get e => exponent;
 

@@ -1,8 +1,5 @@
-// See file LICENSE for more information.
-
 part of api;
 
-/// A pair of public and private asymmetric keys.
 class AsymmetricKeyPair<B, V> {
   final B publicKey;
   final V privateKey;

@@ -1,11 +1,5 @@
-// See file LICENSE for more information.
-
 part of api;
 
-/// This kind of exception is thrown when a user tries to create an algorithm
-/// or domain parameters that were not correctly registered. This can be
-/// because the corresponding class was not imported, or because the algorithm
-/// does not exist.
 class RegistryFactoryException implements Exception {
   final String message;
 

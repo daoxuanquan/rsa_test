@@ -1,5 +1,3 @@
-// See file LICENSE for more information.
-
 library src.registry;
 
 import 'package:test_rsa_lib/api.dart';
@@ -31,15 +29,7 @@ class StaticFactoryConfig extends FactoryConfig {
       : super(type);
 }
 
-// From the PatternCharacter rule here:
-// http://ecma-international.org/ecma-262/5.1/#sec-15.10
 final _specialRegExpChars = RegExp(r'([\\\^\$\.\|\+\[\]\(\)\{\}])');
-
-/// Escapes special regular expression characters in [str] so that it can be
-/// used as a literal match inside of a [RegExp].
-///
-/// The special characters are: \ ^ $ . | + [ ] ( ) { }
-/// as defined here: http://ecma-international.org/ecma-262/5.1/#sec-15.10
 String _escapeRegExp(String str) => str.splitMapJoin(_specialRegExpChars,
     onMatch: (Match m) => '\\${m.group(0)}', onNonMatch: (s) => s);
 
@@ -53,19 +43,14 @@ class DynamicFactoryConfig extends FactoryConfig {
       Type type, String regexString, DynamicConstructorFactory factory)
       : this(type, RegExp(regexString), factory);
 
-  /// A dynamic registry that matches by prefix.
-  /// The part after the prefix will be in `match.group(1)`.
   DynamicFactoryConfig.prefix(
       Type type, String prefix, DynamicConstructorFactory factory)
       : this.regex(type, '^${_escapeRegExp(prefix)}(.+)\$', factory);
 
-  /// A dynamic registry that matches by suffix.
-  /// The part before the suffix will be in `match.group(1)`.
   DynamicFactoryConfig.suffix(
       Type type, String suffix, DynamicConstructorFactory factory)
       : this.regex(type, '^(.+)${_escapeRegExp(suffix)}\$', factory);
 
-  /// Invokes the factory when it matches. Else returns null.
   RegistrableConstructor? tryFactory(String algorithmName) {
     Match? match = regExp.firstMatch(algorithmName);
     if (match == null) {
@@ -113,7 +98,6 @@ class _RegistryImpl implements FactoryRegistry {
 
   RegistrableConstructor? _createConstructor(
       Type type, String registrableName) {
-    // Init lazily
     _checkInit();
 
     if (_staticFactories.containsKey(type) &&
@@ -130,7 +114,6 @@ class _RegistryImpl implements FactoryRegistry {
       }
     }
 
-    // No factory found
     throw RegistryFactoryException.unknown(registrableName, type);
   }
 

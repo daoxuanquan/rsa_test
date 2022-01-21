@@ -1,5 +1,3 @@
-// See file LICENSE for more information.
-
 part of api;
 
 abstract class AsymmetricBlockCipher extends Algorithm {

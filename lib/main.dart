@@ -38,8 +38,6 @@ AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
   final myPublic = pair.publicKey as RSAPublicKey;
   final myPrivate = pair.privateKey as RSAPrivateKey;
 
-  // The RSA numbers will always satisfy these properties
-
   assert(myPublic.modulus == myPrivate.modulus);
   assert(myPrivate.p! * myPrivate.q! == myPrivate.modulus, 'p.q != n');
   final phi = (myPrivate.p! - BigInt.one) * (myPrivate.q! - BigInt.one);
@@ -47,8 +45,6 @@ AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAkeyPair(
 
   return AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey>(myPublic, myPrivate);
 }
-
-/// rsa = use RSAEngine without an Asymmetric Block Cipher.
 
 enum AsymBlockCipherToUse { rsa }
 
@@ -117,16 +113,11 @@ Uint8List _processInBlocks(AsymmetricBlockCipher engine, Uint8List input) {
 }
 
 Uint8List tamperWithData(Uint8List original) {
-// Tampered with data does not verify
-
   final tamperedData = Uint8List.fromList(original);
-  tamperedData[tamperedData.length - 1] ^= 0x01; // XOR to flip one bit
+  tamperedData[tamperedData.length - 1] ^= 0x01;
 
   return tamperedData;
 }
-
-//----------------------------------------------------------------
-// Print out the RSA key pair
 
 String dumpRsaKeys(AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> k,
     {bool verbose = false}) {
@@ -146,13 +137,6 @@ Private:
   }
   return buf.toString();
 }
-
-//----------------------------------------------------------------
-/// Represent bytes in hexadecimal
-///
-/// If a [separator] is provided, it is placed the hexadecimal characters
-/// representing each byte. Otherwise, all the hexadecimal characters are
-/// simply concatenated together.
 
 String bin2hex(Uint8List bytes, {String? separator, int? wrap}) {
   var len = 0;
@@ -175,11 +159,6 @@ String bin2hex(Uint8List bytes, {String? separator, int? wrap}) {
   return buf.toString();
 }
 
-//----------------------------------------------------------------
-/// Tests two Uint8List for equality.
-///
-/// Returns true if they contain all the same bytes. Otherwise false.
-
 bool isUint8ListEqual(Uint8List a, Uint8List b) {
   if (a.length == b.length) {
     for (var x = 0; x < a.length; x++) {
@@ -190,7 +169,6 @@ bool isUint8ListEqual(Uint8List a, Uint8List b) {
   }
   return true;
 }
-//----------------------------------------------------------------
 
 String? _testEncryptAndDecrypt(
     AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> rsaPair,
@@ -229,13 +207,12 @@ String? _testEncryptAndDecrypt(
 //----------------------------------------------------------------
 String encodeRsaBank(text) {
   var verbose = true;
-  final BigInt keyN = BigInt.from(2476163479);
-  final BigInt keyD = BigInt.from(308180633);
-  final BigInt keyP = BigInt.from(61949);
-  final BigInt keyQ = BigInt.from(39971);
+  final BigInt keyN = BigInt.from(158549);
+  final BigInt keyD = BigInt.from(120053);
+  final BigInt keyP = BigInt.from(479);
+  final BigInt keyQ = BigInt.from(331);
   final BigInt keyE = BigInt.from(65537);
   // Generate an RSA key pair
-
   final rsaPair = generateRSAkeyPair(
       bitLength: 32,
       initd: keyD,
@@ -254,12 +231,11 @@ String encodeRsaBank(text) {
 
 String decodeRsaBank(String text) {
   var verbose = true;
-  final BigInt keyN = BigInt.from(2476163479);
-  final BigInt keyD = BigInt.from(308180633);
-  final BigInt keyP = BigInt.from(61949);
-  final BigInt keyQ = BigInt.from(39971);
+  final BigInt keyN = BigInt.from(158549);
+  final BigInt keyD = BigInt.from(120053);
+  final BigInt keyP = BigInt.from(479);
+  final BigInt keyQ = BigInt.from(331);
   final BigInt keyE = BigInt.from(65537);
-  // Generate an RSA key pair
 
   final rsaPair = generateRSAkeyPair(
       bitLength: 32,
@@ -291,7 +267,6 @@ String encodeRsaGateWay(text) {
   final BigInt keyP = BigInt.from(61949);
   final BigInt keyQ = BigInt.from(39971);
   final BigInt keyE = BigInt.from(65537);
-  // Generate an RSA key pair
 
   final rsaPair = generateRSAkeyPair(
       bitLength: 32,

@@ -1,7 +1,6 @@
 part of api;
 
 abstract class Xof extends Digest {
-  /// Create the Xof specified by the standard [algorithmName].
   factory Xof(String algorithmName) => registry.create<Xof>(algorithmName);
 
   ///

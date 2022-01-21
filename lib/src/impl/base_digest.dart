@@ -1,12 +1,9 @@
-// See file LICENSE for more information.
-
 library src.impl.base_digest;
 
 import 'dart:typed_data';
 
 import 'package:test_rsa_lib/api.dart';
 
-/// Base implementation of [Digest] which provides shared methods.
 abstract class BaseDigest implements Digest {
   @override
   Uint8List process(Uint8List data) {

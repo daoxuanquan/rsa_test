@@ -24,7 +24,6 @@ class PlatformGeneric extends Platform {
 
 Platform getPlatform() => PlatformGeneric.instance;
 
-// Uses the built in entropy source
 class _genericEntropySource implements EntropySource {
   final _src = Random.secure();
 
