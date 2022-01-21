@@ -285,6 +285,8 @@ String encodeRsaGateWay(text) {
 }
 
 String decodeRsaGateWay(String text) {
+  text.replaceAll("\n", "");
+  print(text);
   var verbose = true;
   final BigInt keyN = BigInt.from(2476163479);
   final BigInt keyD = BigInt.from(308180633);
@@ -306,6 +308,7 @@ String decodeRsaGateWay(String text) {
   if (isUint8ListEqual(decryptedBytes, hex2bin(text))) {
     if (verbose) {
       print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
+
       return utf8.decode(decryptedBytes);
     }
   } else {
@@ -316,7 +319,7 @@ String decodeRsaGateWay(String text) {
 }
 
 void main() async {
-  final HttpServer server = await HttpServer.bind("localhost", 8080);
+  final HttpServer server = await HttpServer.bind("127.0.0.1", 8080);
 
   server.listen((HttpRequest event) async {
     try {
