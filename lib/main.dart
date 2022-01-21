@@ -227,8 +227,7 @@ String? _testEncryptAndDecrypt(
 }
 
 //----------------------------------------------------------------
-String? encodePaymentCard(
-    String carNumber, String cardHolder, int cvv, String expiredDate) {
+String encodeRsaBank(text) {
   var verbose = true;
   final BigInt keyN = BigInt.from(2476163479);
   final BigInt keyD = BigInt.from(308180633);
@@ -244,39 +243,122 @@ String? encodePaymentCard(
       initP: keyP,
       initE: keyE,
       initN: keyN);
-  // final rsaPair = generateRSAkeyPair(
-  //   bitLength: 32,
-  // );
+
   print(dumpRsaKeys(rsaPair, verbose: verbose));
   print(rsaPair.publicKey);
-  // Use the key pair
-
-  var stringCard =
-      '{"card_number":"$carNumber","card_holder":"$cardHolder","CVV":$cvv,"expired_date": "$expiredDate"}';
-
-  print('Plaintext: $stringCard\n');
-
-  final bytes = utf8.encode(stringCard);
-
-  return _testEncryptAndDecrypt(rsaPair, Uint8List.fromList(bytes), true);
+  print('Plaintext: $text\n');
+  final bytes = utf8.encode(text);
+  final cipherText = rsaEncrypt(rsaPair.publicKey, Uint8List.fromList(bytes));
+  return bin2hex(cipherText, wrap: 64);
 }
 
-void main_test() async {
+String decodeRsaBank(String text) {
+  var verbose = true;
+  final BigInt keyN = BigInt.from(2476163479);
+  final BigInt keyD = BigInt.from(308180633);
+  final BigInt keyP = BigInt.from(61949);
+  final BigInt keyQ = BigInt.from(39971);
+  final BigInt keyE = BigInt.from(65537);
+  // Generate an RSA key pair
+
+  final rsaPair = generateRSAkeyPair(
+      bitLength: 32,
+      initd: keyD,
+      initQ: keyQ,
+      initP: keyP,
+      initE: keyE,
+      initN: keyN);
+
+  final decryptedBytes = rsaDecrypt(rsaPair.privateKey, text);
+
+  if (isUint8ListEqual(decryptedBytes, plaintext)) {
+    if (verbose) {
+      print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
+      return utf8.decode(decryptedBytes);
+    }
+  } else {
+    print('Decrypted:\n"${utf8.decode(decryptedBytes, allowMalformed: true)}"');
+    print('fail: decrypted does not match plaintext');
+  }
+}
+
+String encodeRsaGateWay(text) {
+  var verbose = true;
+  final BigInt keyN = BigInt.from(2476163479);
+  final BigInt keyD = BigInt.from(308180633);
+  final BigInt keyP = BigInt.from(61949);
+  final BigInt keyQ = BigInt.from(39971);
+  final BigInt keyE = BigInt.from(65537);
+  // Generate an RSA key pair
+
+  final rsaPair = generateRSAkeyPair(
+      bitLength: 32,
+      initd: keyD,
+      initQ: keyQ,
+      initP: keyP,
+      initE: keyE,
+      initN: keyN);
+
+  print(dumpRsaKeys(rsaPair, verbose: verbose));
+  print(rsaPair.publicKey);
+  print('Plaintext: $text\n');
+  final bytes = utf8.encode(text);
+  final cipherText = rsaEncrypt(rsaPair.publicKey, Uint8List.fromList(bytes));
+  return bin2hex(cipherText, wrap: 64);
+}
+
+String decodeRsaGateWay(text) {
+  var verbose = true;
+  final BigInt keyN = BigInt.from(2476163479);
+  final BigInt keyD = BigInt.from(308180633);
+  final BigInt keyP = BigInt.from(61949);
+  final BigInt keyQ = BigInt.from(39971);
+  final BigInt keyE = BigInt.from(65537);
+  // Generate an RSA key pair
+
+  final rsaPair = generateRSAkeyPair(
+      bitLength: 32,
+      initd: keyD,
+      initQ: keyQ,
+      initP: keyP,
+      initE: keyE,
+      initN: keyN);
+
+  print(dumpRsaKeys(rsaPair, verbose: verbose));
+  print(rsaPair.publicKey);
+  print('Plaintext: $text\n');
+  final bytes = utf8.encode(text);
+  final cipherText = rsaEncrypt(rsaPair.publicKey, Uint8List.fromList(bytes));
+  return bin2hex(cipherText, wrap: 64);
+}
+
+void main() async {
   final HttpServer server = await HttpServer.bind("localhost", 8080);
 
   server.listen((HttpRequest event) async {
     try {
-      print(event.uri);
-      await utf8
-          .decodeStream(event)
-          .then((data) => {print(data), event.response.write("main_test()")});
-      print(event);
+      if (event.uri.toString() == "/encode") {
+        await utf8.decodeStream(event).then((body) => {
+              print(body),
+              event.response.write("main_test()"),
+            });
+        print(event);
+      } else if (event.uri.toString() == "/decode") {
+        await utf8.decodeStream(event).then((body) => {
+              print(body),
+              event.response.write("main_test()"),
+              event.response.write("main_test()")
+            });
+        print(event);
+      } else {
+        event.response.write({"message": "bad request"});
+      }
     } finally {
       event.response.close();
     }
   });
 }
 
-void main() {
-  encodePaymentCard("carNumber", "cardHolder", 1, "expiredDate");
-}
+// void main() {
+//   encodePaymentCard("carNumber", "cardHolder", 1, "expiredDate");
+// }
