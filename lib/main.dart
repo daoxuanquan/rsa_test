@@ -269,19 +269,21 @@ String decodeRsaBank(String text) {
       initE: keyE,
       initN: keyN);
 
-  final decryptedBytes = rsaDecrypt(rsaPair.privateKey, text);
+  final decryptedBytes = rsaDecrypt(rsaPair.privateKey, hex2bin(text));
 
-  if (isUint8ListEqual(decryptedBytes, plaintext)) {
+  if (isUint8ListEqual(decryptedBytes, hex2bin(text))) {
     if (verbose) {
       print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
       return utf8.decode(decryptedBytes);
     }
   } else {
     print('Decrypted:\n"${utf8.decode(decryptedBytes, allowMalformed: true)}"');
-    print('fail: decrypted does not match plaintext');
+    return 'fail: decrypted does not match plaintext';
   }
+  return 'fail: decrypted does not match plaintext';
 }
 
+//----------------------------------------------------------------
 String encodeRsaGateWay(text) {
   var verbose = true;
   final BigInt keyN = BigInt.from(2476163479);
@@ -307,7 +309,7 @@ String encodeRsaGateWay(text) {
   return bin2hex(cipherText, wrap: 64);
 }
 
-String decodeRsaGateWay(text) {
+String decodeRsaGateWay(String text) {
   var verbose = true;
   final BigInt keyN = BigInt.from(2476163479);
   final BigInt keyD = BigInt.from(308180633);
@@ -324,12 +326,18 @@ String decodeRsaGateWay(text) {
       initE: keyE,
       initN: keyN);
 
-  print(dumpRsaKeys(rsaPair, verbose: verbose));
-  print(rsaPair.publicKey);
-  print('Plaintext: $text\n');
-  final bytes = utf8.encode(text);
-  final cipherText = rsaEncrypt(rsaPair.publicKey, Uint8List.fromList(bytes));
-  return bin2hex(cipherText, wrap: 64);
+  final decryptedBytes = rsaDecrypt(rsaPair.privateKey, hex2bin(text));
+
+  if (isUint8ListEqual(decryptedBytes, hex2bin(text))) {
+    if (verbose) {
+      print('Decrypted:\n"${utf8.decode(decryptedBytes)}"');
+      return utf8.decode(decryptedBytes);
+    }
+  } else {
+    print('Decrypted:\n"${utf8.decode(decryptedBytes, allowMalformed: true)}"');
+    return 'fail: decrypted does not match plaintext';
+  }
+  return 'fail: decrypted does not match plaintext';
 }
 
 void main() async {
@@ -337,18 +345,31 @@ void main() async {
 
   server.listen((HttpRequest event) async {
     try {
-      if (event.uri.toString() == "/encode") {
-        await utf8.decodeStream(event).then((body) => {
-              print(body),
-              event.response.write("main_test()"),
-            });
+      if (event.uri.toString() == "/encode_gateway" ||
+          event.uri.toString() == "/encode_bank") {
+        if (event.uri.toString() == "/encode_gateway") {
+          await utf8.decodeStream(event).then((body) => {
+                event.response
+                    .write(encodeRsaGateWay(jsonDecode(body)["message"]))
+              });
+        } else {
+          await utf8.decodeStream(event).then((body) => {
+                event.response.write(encodeRsaBank(jsonDecode(body)["message"]))
+              });
+        }
         print(event);
-      } else if (event.uri.toString() == "/decode") {
-        await utf8.decodeStream(event).then((body) => {
-              print(body),
-              event.response.write("main_test()"),
-              event.response.write("main_test()")
-            });
+      } else if (event.uri.toString() == "/decode_bank" ||
+          event.uri.toString() == "/decode_gateway") {
+        if (event.uri.toString() == "/decode_bank") {
+          await utf8.decodeStream(event).then((body) => {
+                event.response.write(decodeRsaBank(jsonDecode(body)["message"]))
+              });
+        } else {
+          await utf8.decodeStream(event).then((body) => {
+                event.response
+                    .write(decodeRsaGateWay(jsonDecode(body)["message"]))
+              });
+        }
         print(event);
       } else {
         event.response.write({"message": "bad request"});
@@ -359,6 +380,13 @@ void main() async {
   });
 }
 
-// void main() {
-//   encodePaymentCard("carNumber", "cardHolder", 1, "expiredDate");
-// }
+Uint8List hex2bin(String hexStr) {
+  if (hexStr.length % 2 != 0) {
+    throw const FormatException('not an even number of hexadecimal characters');
+  }
+  final result = Uint8List(hexStr.length ~/ 2);
+  for (var i = 0; i < result.length; i++) {
+    result[i] = int.parse(hexStr.substring(2 * i, 2 * (i + 1)), radix: 16);
+  }
+  return result;
+}
